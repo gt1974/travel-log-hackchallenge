@@ -38,6 +38,8 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, auto_increment =True)
     review = db.Column(db.Float, nullable=False)
     text = db.Column(db.String, nullable=False)
+    place_id = db.Column(db.Integer, db.ForeignKey("places.id"), nullable = False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable = False)
     
     def __init__(self, **kwargs):
         """
