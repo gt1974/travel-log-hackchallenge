@@ -1,4 +1,4 @@
-from db import db
+from db import Post, db
 import json
 from flask import Flask
 from flask import request
@@ -22,7 +22,7 @@ def success_response(data, code=200):
 def failure_response(message, code=400):
     return json.dumps({"error": message}), code
 
-# Routes
+# USER Routes
 @app.route("/users/", methods=["POST"])
 def create_user():
     """
@@ -36,3 +36,35 @@ def create_user():
     db.session.add(new_user)
     db.session.commit()
     return success_response(new_user.serialize(), 201)
+
+@app.route("/users/<int:user_id>/")
+def get_user(user_id):
+    """
+    Endpoint for getting a user
+    """
+    user = User.query.filter_by(id=user_id).first()
+    if user is None:
+        return failure_response("user not found", 404)
+    return success_response(user.serialize())
+
+# POSTS Routes
+@app.route("/posts/")
+def get_posts():
+    """
+    Endpoint for getting all posts
+    """
+    posts = []
+    for post in Post.query.all():
+        posts.append(post.serialize())
+    return success_response({"posts": [p.serialize() for p in Post.query.all()]})
+
+@app.route("/posts/<int:post_id>/")
+def get_course(post_id):
+    """
+    Endpoint for getting a post by id
+    """
+    post = Post.query.filter_by(id=post_id).first()
+    if post is None:
+        return failure_response("post not found", 404)
+    return success_response(post.serialize())
+
