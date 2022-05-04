@@ -5,10 +5,12 @@ db = SQLAlchemy()
 class User(db.Model):
     """
     Initiate User object
+    has a one to many relationship with Post model
     """
     __tablename__ = "users"
-    id = db.Column(db.Integer, primary_key=True, auto_increment =True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement =True)
     name = db.Column(db.String, nullable=False)
+    posts = db.relationship("Post", cascade='delete')
     
     def __init__(self, **kwargs):
         """
@@ -23,19 +25,24 @@ class User(db.Model):
         return {        
             "id": self.id,                
             "name": self.name,
+            "posts": [p.serialize() for p in self.posts]
         }
     def simple_serialize(self):  
         """
         serialize user object
         """  
-        pass
+        return {
+            "id": self.id,                
+            "name": self.name
+        }
 
 class Post(db.Model):
     """
     Initiate Post object
+    
     """
     __tablename__ = "posts"
-    id = db.Column(db.Integer, primary_key=True, auto_increment =True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement =True)
     review = db.Column(db.Float, nullable=False)
     text = db.Column(db.String, nullable=False)
     place_id = db.Column(db.Integer, db.ForeignKey("places.id"), nullable = False)
@@ -55,7 +62,9 @@ class Post(db.Model):
         return {        
             "id": self.id,                
             "name": self.review,
-            "text": self.text
+            "text": self.text,
+            "place_id": [p.simple_serialize() for p in self.place_id],
+            "user_id": [u.simple_serialize() for u in self.user_id]
         }
     def simple_serialize(self):  
         """
@@ -66,10 +75,12 @@ class Post(db.Model):
 class Place(db.Model):
     """
     Initiate Place object
+    has a one to many relationship with Posts
     """
     __tablename__ = "places"
-    id = db.Column(db.Integer, primary_key=True, auto_increment =True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement =True)
     name = db.Column(db.String, nullable=False)
+    posts = db.relationship("Post", cascade='delete')
     
     def __init__(self, **kwargs):
         """
@@ -84,10 +95,14 @@ class Place(db.Model):
         return {        
             "id": self.id,                
             "name": self.name,
+            "posts": [p.simple_serialize() for p in self.posts]
         }
     def simple_serialize(self):  
         """
         serialize place object
         """  
-        pass
+        return {
+            "id": self.id,                
+            "name": self.name
+        }
 
