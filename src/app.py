@@ -3,6 +3,8 @@ import json
 from flask import Flask
 from flask import request
 from db import User
+from db import Place
+from db import Category
 
 app = Flask(__name__)
 db_filename = "travel_log.db"
@@ -23,6 +25,7 @@ def failure_response(message, code=400):
     return json.dumps({"error": message}), code
 
 # USER Routes
+@app.route("/")
 @app.route("/users/", methods=["POST"])
 def create_user():
     """
@@ -47,6 +50,33 @@ def get_user(user_id):
         return failure_response("user not found", 404)
     return success_response(user.serialize())
 
+# PLACES routes
+@app.route("/places/")
+def get_places():
+    """
+    Endpoint for getting all places
+    """
+    places = []
+    for place in Place.query.all():
+        places.append(place.serialize())
+    return success_response({"places": [p.serialize() for p in Place.query.all()]})
+
+@app.route("/places/", methods=["POST"])
+def create_place():
+    """
+    Endpoint for creating a new place
+    """
+    body = json.loads(request.data)
+    name = body.get("name")
+    if not name:
+        return failure_response("missing place name", 400)
+
+    new_place = Place(name=name)
+    db.session.add(new_place)
+    db.session.commit()
+    return success_response(new_place.serialize(), 201)
+
+
 # POSTS Routes
 @app.route("/posts/")
 def get_posts():
@@ -68,3 +98,34 @@ def get_course(post_id):
         return failure_response("post not found", 404)
     return success_response(post.serialize())
 
+@app.route("/places/<int:place_id>/<int:user_id>/add/", methods=["POST"])
+def create_post(place_id, user_id):
+    """
+    endpoint for creating a new post for a place 
+    """
+    body = json.loads(request.data)
+   
+    place = Place.query.filter_by(id=place_id).first()
+    if place is None:
+        return failure_response("place not found", 404)
+    
+    if place_id is None:
+        return failure_response("place id not found", 404)
+    
+    if user_id is None:
+        return failure_response("user not found", 404)
+
+    new_post = Post(
+        review=body.get("review"),
+        text=body.get("text"),
+        place_id=place_id,
+        user_id =user_id
+    )
+    db.session.add(new_post)
+    db.session.commit()
+    return success_response(new_post.serialize(), 201)
+
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=6000, debug=True)
