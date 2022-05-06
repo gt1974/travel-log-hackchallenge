@@ -27,6 +27,10 @@ class PostTableViewCell: UITableViewCell  {
         if let body = post.body {
             bodyLabel.text = body
         }
+        if let rating = post.rating {
+            let imgFile = "rating-" + String(rating)
+            ratingImage.image = UIImage(named: imgFile)
+        }
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "MMM d | hh:mm"
@@ -58,12 +62,15 @@ class PostTableViewCell: UITableViewCell  {
         lab.font = .systemFont(ofSize: 14)
         return lab
     }()
+    var ratingImage: UIImageView = {
+        return UIImageView()
+     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         self.id = UUID()
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        [posterLabel, titleLabel, bodyLabel].forEach { subView in
+        [posterLabel, titleLabel, bodyLabel, ratingImage].forEach { subView in
             subView.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview(subView)
         }
@@ -84,7 +91,10 @@ class PostTableViewCell: UITableViewCell  {
             posterLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: padding),
             posterLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -padding*2),
             
-            bodyLabel.topAnchor.constraint(equalTo: posterLabel.bottomAnchor, constant: padding),
+            ratingImage.topAnchor.constraint(equalTo: posterLabel.bottomAnchor, constant: padding/2),
+            ratingImage.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: padding),
+            
+            bodyLabel.topAnchor.constraint(equalTo: ratingImage.bottomAnchor, constant: padding),
             bodyLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: padding),
             bodyLabel.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -padding*2),
         ])

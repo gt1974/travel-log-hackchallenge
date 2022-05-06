@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		91F252D52824EB3800333AE3 /* ProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F252D42824EB3800333AE3 /* ProfileController.swift */; };
 		91F54856281F382B00AE62C2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F54855281F382B00AE62C2 /* AppDelegate.swift */; };
 		91F54858281F382B00AE62C2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F54857281F382B00AE62C2 /* SceneDelegate.swift */; };
 		91F5485A281F382B00AE62C2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91F54859281F382B00AE62C2 /* ViewController.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		91F252D42824EB3800333AE3 /* ProfileController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileController.swift; sourceTree = "<group>"; };
 		91F54852281F382B00AE62C2 /* hack-challenge.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "hack-challenge.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		91F54855281F382B00AE62C2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		91F54857281F382B00AE62C2 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 				91F54855281F382B00AE62C2 /* AppDelegate.swift */,
 				91F54857281F382B00AE62C2 /* SceneDelegate.swift */,
 				91F54859281F382B00AE62C2 /* ViewController.swift */,
+				91F252D42824EB3800333AE3 /* ProfileController.swift */,
 				91F5486D281F38F900AE62C2 /* NewPostController.swift */,
 				91F5486B281F38D000AE62C2 /* PostTableViewCell.swift */,
 				91F54869281F38B200AE62C2 /* Post.swift */,
@@ -147,6 +150,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91F252D52824EB3800333AE3 /* ProfileController.swift in Sources */,
 				91F5485A281F382B00AE62C2 /* ViewController.swift in Sources */,
 				91F54856281F382B00AE62C2 /* AppDelegate.swift in Sources */,
 				91F5486E281F38F900AE62C2 /* NewPostController.swift in Sources */,
