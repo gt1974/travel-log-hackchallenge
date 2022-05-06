@@ -117,10 +117,18 @@ def create_post(user_id):
     place = body.get("place")
     if place is None:
         return failure_response("place not found", 404)
-    place_id = (Place.query.filter_by(name=place).first()).id
+    place_id = (Place.query.filter_by(name=place).first())
     
     if place_id is None:
-        return failure_response("place id not found", 404)
+        # create new place
+        # otherwise assign task to existing category
+        new_place = Place(name = place)
+        db.session.add(new_place)
+        db.session.commit()
+
+    place_id = (Place.query.filter_by(name=place).first()).id
+
+
     
     if user_id is None:
         return failure_response("user not found", 404)
@@ -129,13 +137,37 @@ def create_post(user_id):
         review=body.get("review"),
         text=body.get("text"),
         place_id=place_id,
-        user_id =user_id
+        user_id =user_id,
+        categories = body.get("categories")
     )
     db.session.add(new_post)
     db.session.commit()
     return success_response(new_post.serialize(), 201)
 
+# Category Routes
+@app.route("/categories/")
+def get_categories():
+    """
+    Endpoint for getting all categories
+    """
+    categories = []
+    for category in Category.query.all():
+        categories.append(category.serialize())
+    return success_response({"categories": [c.serialize() for c in Category.query.all()]})
 
+@app.route("/categories/", methods=["POST"])
+def create_category():
+    """
+    Endpoint for creating a new category
+    """
+    body = json.loads(request.data)
+    description = body.get("description")
+    if description is None:
+        return failure_response("need description")
+    new_category = Category(description = description)
+    db.session.add(new_category)
+    db.session.commit()
+    return success_response(new_category.serialize(), 201)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
