@@ -99,7 +99,7 @@ def get_posts():
     return success_response({"posts": [p.serialize() for p in Post.query.all()]})
 
 @app.route("/posts/<int:post_id>/")
-def get_course(post_id):
+def get_post(post_id):
     """
     Endpoint for getting a post by id
     """
@@ -127,15 +127,19 @@ def create_post(user_id):
         db.session.commit()
 
     place_id = (Place.query.filter_by(name=place).first()).id
-
-
     
     if user_id is None:
         return failure_response("user not found", 404)
-
+    review = body.get("review")
+    if not review:
+        return failure_response("missing review", 404)
+    text = body.get("text")
+    if not text:
+        return failure_response("missing text", 404)
+   
     new_post = Post(
-        review=body.get("review"),
-        text=body.get("text"),
+        review=review,
+        text=text,
         place_id=place_id,
         user_id =user_id,
         categories = body.get("categories")
@@ -143,6 +147,18 @@ def create_post(user_id):
     db.session.add(new_post)
     db.session.commit()
     return success_response(new_post.serialize(), 201)
+
+@app.route("/posts/<int:post_id>/",  methods=["DELETE"])
+def delete_post(post_id):
+    """
+    endpoint for deleting a post by id
+    """
+    post = Post.query.filter_by(id=post_id).first()
+    if post is None:
+        return failure_response("post not found")
+    db.session.delete(post)
+    db.session.commit()
+    return success_response(post.serialize())
 
 # Category Routes
 @app.route("/categories/")
@@ -153,21 +169,27 @@ def get_categories():
     categories = []
     for category in Category.query.all():
         categories.append(category.serialize())
-    return success_response({"categories": [c.serialize() for c in Category.query.all()]})
+    return success_response({"categories": [c.simple_serialize() for c in Category.query.all()]})
 
-@app.route("/categories/", methods=["POST"])
-def create_category():
+@app.route("/posts/<int:post_id>/category/", methods=["POST"])
+def assign_category(post_id):
     """
-    Endpoint for creating a new category
+    Endpoint for assigning a category to a post by id 
     """
+    post = Post.query.filter_by(id=post_id).first()
+    if post is None:
+        return failure_response("post not found")
     body = json.loads(request.data)
     description = body.get("description")
-    if description is None:
-        return failure_response("need description")
-    new_category = Category(description = description)
-    db.session.add(new_category)
+    
+    category = Category.query.filter_by(description=description).first()
+    if category is None:
+        category = Category(description=description)
+    post.categories.append(category)
+
     db.session.commit()
-    return success_response(new_category.serialize(), 201)
+    return success_response(post.serialize())
+
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=6000, debug=True)
