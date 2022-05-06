@@ -197,6 +197,19 @@ def get_post(post_id):
         return failure_response("post not found", 404)
     return success_response(post.serialize())
 
+@app.route("/users/<int:user_id>/posts/")
+def get_posts_from_user(user_id):
+    """
+    endpoint for getting posts given a user's id
+    """
+    posts = []
+    if posts is None:
+        return failure_response("user has not posts", 404)
+    
+    for post in Post.query.filter_by(user_id=user_id):
+        posts.append(post.serialize())
+    return success_response({"posts": [p.simple_serialize() for p in Post.query.filter_by(user_id=user_id)]})
+
 @app.route("/users/<int:user_id>/posts/", methods=["POST"])
 def create_post(user_id):
     """
