@@ -26,6 +26,16 @@ def failure_response(message, code=400):
 
 # USER Routes
 @app.route("/")
+@app.route("/users/")
+def get_users():
+    """
+    Endpoint for getting a user
+    """
+    users = []
+    for user in User.query.all():
+        users.append(user.serialize()) 
+    return success_response({"users": [u.serialize() for u in User.query.all()]})
+
 @app.route("/users/", methods=["POST"])
 def create_user():
     """
@@ -98,16 +108,16 @@ def get_course(post_id):
         return failure_response("post not found", 404)
     return success_response(post.serialize())
 
-@app.route("/places/<int:place_id>/<int:user_id>/add/", methods=["POST"])
-def create_post(place_id, user_id):
+@app.route("/users/<int:user_id>/posts/", methods=["POST"])
+def create_post(user_id):
     """
     endpoint for creating a new post for a place 
     """
     body = json.loads(request.data)
-   
-    place = Place.query.filter_by(id=place_id).first()
+    place = body.get("place")
     if place is None:
         return failure_response("place not found", 404)
+    place_id = (Place.query.filter_by(name=place).first()).id
     
     if place_id is None:
         return failure_response("place id not found", 404)
@@ -128,4 +138,4 @@ def create_post(place_id, user_id):
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6000, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
